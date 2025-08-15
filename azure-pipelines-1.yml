@@ -1,0 +1,64 @@
+trigger: none
+
+stages:
+  - stage:
+    pool:
+      vmImage: 'ubuntu-latest'
+    jobs:
+      - job:
+        steps:
+        - task: TerraformInstaller@1
+          displayName: instaaling terraform
+          inputs:
+            terraformVersion: 'latest'
+      - job: 
+        steps:
+        - task: TerraformTask@5
+          displayName: terraform init
+          inputs:
+            provider: 'azurerm'
+            command: 'init'
+            backendServiceArm: 'Workload_secure_connection'
+            backendAzureRmStorageAccountName: 'demostorage8250'
+            backendAzureRmContainerName: 'anujcontainer'
+            backendAzureRmKey: 'anuj.tfstate'
+
+      - job:
+        steps:
+        - task: TerraformTask@5
+          displayName: terraform fmt
+          inputs:
+            provider: 'azurerm'
+            command: 'custom'
+            outputTo: 'console'
+            customCommand: 'fmt'
+            environmentServiceNameAzureRM: 'Workload_secure_connection'
+        
+      - job:
+        steps:
+        - task: TerraformTask@5
+          displayName: terraform validate
+          inputs:
+            provider: 'azurerm'
+            command: 'validate'
+      - job:
+        steps:
+        - task: TerraformTask@5
+          displayName: terraform plan
+          inputs:
+            provider: 'azurerm'
+            command: 'plan'
+            environmentServiceNameAzureRM: 'Workload_secure_connection'
+  - stage:
+    pool: 'server'
+    jobs:
+     - job:
+       steps:
+       - task: ManualValidation@1
+         inputs:
+           notifyUsers: 'anujsoam07@gmail.com'
+           approvers: 'anujsoam07@gmail.com'
+           instructions: 'if timeout directly reject for sure.'
+           
+    
+  
