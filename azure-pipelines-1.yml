@@ -36,6 +36,11 @@ stages:
           displayName: terraform validate
           inputs:
             provider: 'azurerm'
+            command: 'init'
+            backendServiceArm: 'Workload_secure_connection'
+            backendAzureRmStorageAccountName: 'demostorage8250'
+            backendAzureRmContainerName: 'anujcontainer'
+            backendAzureRmKey: 'anuj.tfstate'
   
         - task: TerraformTask@5
           displayName: terraform plan
