@@ -5,13 +5,14 @@ stages:
     pool:
       vmImage: 'ubuntu-latest'
     jobs:
-      - job:
+      - job: installJob
         steps:
         - task: TerraformInstaller@1
           displayName: instaaling terraform
           inputs:
             terraformVersion: 'latest'
-      - job: 
+      - job: initJob
+        dependsOn: InstallJob
         steps:
         - task: TerraformTask@5
           displayName: terraform init
@@ -24,6 +25,7 @@ stages:
             backendAzureRmKey: 'anuj.tfstate'
 
       - job:
+        dependsOn: initJob
         steps:
         - task: TerraformTask@5
           displayName: terraform fmt
@@ -34,14 +36,16 @@ stages:
             customCommand: 'fmt'
             environmentServiceNameAzureRM: 'Workload_secure_connection'
         
-      - job:
+      - job: fmtJob
+        dependsOn: initJob
         steps:
         - task: TerraformTask@5
           displayName: terraform validate
           inputs:
             provider: 'azurerm'
             command: 'validate'
-      - job:
+      - job: planJob
+        dependsOn: fmtJob
         steps:
         - task: TerraformTask@5
           displayName: terraform plan
