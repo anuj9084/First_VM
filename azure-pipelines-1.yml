@@ -1,5 +1,19 @@
 trigger: none
 
+parameters:
+  - name: runinit
+    type: boolean
+    default: true
+  - name: runfmt
+    type: boolean
+    default: true
+  - name: runvalidate
+    type: boolean
+    default: true
+  - name:  runplan
+    type: boolean
+    default: true
+
 stages:
   - stage: initStage
     pool:
