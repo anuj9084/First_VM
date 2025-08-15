@@ -27,6 +27,7 @@ stages:
             terraformVersion: 'latest'
 
         - task: TerraformTask@5
+          condition: eq('${{ parameters.runInit }}', true)
           displayName: terraform init
           inputs:
             provider: 'azurerm'
@@ -37,6 +38,7 @@ stages:
             backendAzureRmKey: 'anuj.tfstate'
 
         - task: TerraformTask@5
+          condition: eq('${{ parameters.runfmt }}', true)
           displayName: terraform fmt
           inputs:
             provider: 'azurerm'
@@ -45,18 +47,14 @@ stages:
             customCommand: 'fmt'
             environmentServiceNameAzureRM: 'Workload_secure_connection'
         
-
         - task: TerraformTask@5
-          displayName: terraform validate
+          condition: eq('${{ parameters.runvalidate }}', true)
           inputs:
             provider: 'azurerm'
-            command: 'init'
-            backendServiceArm: 'Workload_secure_connection'
-            backendAzureRmStorageAccountName: 'demostorage8250'
-            backendAzureRmContainerName: 'anujcontainer'
-            backendAzureRmKey: 'anuj.tfstate'
+            command: 'validate'
   
         - task: TerraformTask@5
+          condition: eq('${{ parameters.runplan }}', true)
           displayName: terraform plan
           inputs:
             provider: 'azurerm'
